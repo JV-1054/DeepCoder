@@ -1,0 +1,54 @@
+{
+  "name": "deepcoder",
+  "version": "1.0.3",
+  "private": true,
+  "description": "Loopback API gateway that lets the DeepSeek Harness drive any OpenAI-compatible model, even providers that fingerprint clients, cap output tokens or reject sampling parameters.",
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "openai-compatible",
+    "proxy",
+    "gateway",
+    "local-first",
+    "windows",
+    "nodejs",
+    "cli"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "main": "deepcoder.cjs",
+  "bin": {
+    "deepcoder": "deepcoder.cjs"
+  },
+  "author": "Juniper <160837614+JV-1054@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JV-1054/DeepCoder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JV-1054/DeepCoder/issues"
+  },
+  "homepage": "https://github.com/JV-1054/DeepCoder#readme",
+  "scripts": {
+    "start": "node deepcoder.cjs",
+    "setup": "node deepcoder.cjs --setup",
+    "key": "node deepcoder.cjs --set-key",
+    "self-test": "node deepcoder.cjs --self-test",
+    "doctor": "node deepcoder.cjs --doctor",
+    "config:check": "node deepcoder.cjs --check-config",
+    "dsh:profile": "node deepcoder.cjs --print-dsh-profile",
+    "dsh:install": "node deepcoder.cjs --install-dsh-profile",
+    "startup:install": "node deepcoder.cjs --install-startup",
+    "test": "node --test \"test/*.test.cjs\"",
+    "lint": "eslint .",
+    "check": "npm run lint && npm test",
+    "verify": "npm run check && npm run release:manifest && node tools/verify-manifest.cjs",
+    "release:manifest": "node tools/make-manifest.cjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "globals": "^16.0.0"
+  }
+}

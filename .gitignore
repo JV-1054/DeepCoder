@@ -1,0 +1,13 @@
+# The configuration is created by setup.cmd and holds no secret, but every
+# installation should have its own.
+deepcoder-config.json
+
+node_modules/
+npm-debug.log*
+*.log
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

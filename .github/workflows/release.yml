@@ -1,0 +1,60 @@
+name: Check and package
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    name: Tests and lint
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+  package:
+    name: Build the release ZIP
+    needs: check
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Write the release manifest
+        run: npm run release:manifest
+      - name: Build DeepCoder-v<version>.zip
+        shell: pwsh
+        run: |
+          $version = (Get-Content package.json | ConvertFrom-Json).version
+          $stage = Join-Path $PWD 'stage'
+          New-Item -ItemType Directory -Path (Join-Path $stage 'DeepCoder') -Force | Out-Null
+          $skip = @('node_modules', 'stage', '.git', '.github', '.githooks')
+          Get-ChildItem -Recurse -File | ForEach-Object {
+            $relative = $_.FullName.Substring($PWD.Path.Length + 1)
+            if ($skip -notcontains ($relative -split '\\')[0] -and $_.Name -ne 'deepcoder-config.json') {
+              $target = Join-Path $stage ('DeepCoder\' + $relative)
+              New-Item -ItemType Directory -Path (Split-Path $target) -Force | Out-Null
+              Copy-Item $_.FullName $target
+            }
+          }
+          Compress-Archive -Path (Join-Path $stage 'DeepCoder') -DestinationPath "DeepCoder-v$version.zip"
+      - name: Attach the ZIP to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: DeepCoder-v*.zip
+          overwrite_files: true
+          generate_release_notes: false

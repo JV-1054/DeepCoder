@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+'use strict';
+//
+// DeepCoder credits the MiniMax agent on every commit, the way Claude Code
+// credits Claude. The trailer is written once, and an older MiniMax trailer is
+// replaced instead of being duplicated. Merge and squash commits are left
+// alone, and co-authors other than MiniMax are never touched.
+//
+// The hook is written in Node because DeepCoder already requires Node 22, so
+// there is no extra dependency to install and no shell to rely on.
+//
+// Enable it for a fresh clone with:
+//   git config core.hooksPath .githooks
+
+const fs = require('fs');
+
+const trailer = 'Co-authored-by: MiniMax-AI-Dev <192945411+MiniMax-AI-Dev@users.noreply.github.com>';
+const messageFile = process.argv[2];
+
+if (!messageFile || !fs.existsSync(messageFile)) process.exit(0);
+
+const lines = fs.readFileSync(messageFile, 'utf8').split(/\r?\n/);
+const firstLine = lines[0] || '';
+
+// Leave merge and squash commits alone.
+if (/^Merge\s/.test(firstLine) || /^Squash\s/.test(firstLine)) process.exit(0);
+
+// Drop an older MiniMax trailer, keep every other co-author.
+const kept = lines.filter((line) => !/^[Cc]o-[Aa]uthored-[Bb]y:.*[Mm]ini[Mm]ax/.test(line));
+
+// Trim the trailing blank lines, then add the trailer.
+let end = kept.length;
+while (end > 0 && kept[end - 1].trim() === '') end -= 1;
+const message = kept.slice(0, end);
+message.push('', trailer, '');
+
+fs.writeFileSync(messageFile, message.join('\n'), 'utf8');
+process.exit(0);

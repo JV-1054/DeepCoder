@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security issue
+    url: https://github.com/JV-1054/DeepCoder/security/advisories/new
+    about: Please report vulnerabilities privately, not in a public issue.
+  - name: DeepSeek Harness
+    url: https://github.com/deepseek-ai
+    about: Questions about the harness itself belong here.

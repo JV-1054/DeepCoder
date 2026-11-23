@@ -1,0 +1,3 @@
+# The commit hook is a developer helper, not part of the shipped package.
+# Keep it out of the language statistics so the repository reads as what it is.
+.githooks/** linguist-detectable=false
